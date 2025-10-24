@@ -58,7 +58,7 @@ export const useFutureEvents = () => {
   // Expire old requests when component mounts or events change
   useEffect(() => {
     expireRequests();
-  }, [expireRequests, events.length]); // Use events.length instead of events array
+  }, [expireRequests, events.length]);
 
   return events;
 };

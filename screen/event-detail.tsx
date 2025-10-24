@@ -5,7 +5,7 @@ import { FlatList, View, TouchableOpacity } from "react-native";
 
 import { Text } from "@/components/ui";
 import { eventsAtom, requestsAtom, usersAtom, canJoinEventAtom } from "@/state/atoms";
-import { useAcceptRequest, useAuth, useJoinEvent, useRejectRequest } from "@/hooks/useModule";
+import { useAcceptRequest, useAuth, useJoinEvent, useRejectRequest, useCancelRequest } from "@/hooks/useModule";
 
 export const EventDetailsScreen = () => {
   const { currentUser } = useAuth();
@@ -20,6 +20,7 @@ export const EventDetailsScreen = () => {
   const joinEvent = useJoinEvent();
   const acceptRequest = useAcceptRequest();
   const rejectRequest = useRejectRequest();
+  const cancelRequest = useCancelRequest();
 
   const event = useMemo(() => events.get(eventId), [events, eventId]);
 
@@ -44,9 +45,21 @@ export const EventDetailsScreen = () => {
       .filter(item => item !== null);
   }, [eventRequests, users]);
 
+  const userRequest = useMemo(() => {
+    if (!currentUser) return null;
+    return eventRequests.find(
+      req => req.userId === currentUser.id && (req.status === "PENDING" || req.status === "ACCEPTED"),
+    );
+  }, [eventRequests, currentUser]);
+
   const organizer = useMemo(() => (event ? users.get(event.organizerId) : null), [event, users]);
   const canJoin = useMemo(() => checkCanJoin(eventId, currentUser?.id || ""), [checkCanJoin, eventId, currentUser?.id]);
   const isOrganizer = useMemo(() => event?.organizerId === currentUser?.id, [event?.organizerId, currentUser?.id]);
+
+  const hasEventStarted = useMemo(() => {
+    if (!event) return false;
+    return event.startTime <= Date.now();
+  }, [event]);
 
   const handleJoinEvent = useCallback(async () => {
     const result = await joinEvent(eventId);
@@ -54,6 +67,17 @@ export const EventDetailsScreen = () => {
       alert(result.error);
     }
   }, [joinEvent, eventId]);
+
+  const handleCancelRequest = useCallback(async () => {
+    if (!userRequest) return;
+
+    const result = await cancelRequest(userRequest.id);
+    if (result.success) {
+      alert("Your request has been cancelled");
+    } else {
+      alert(result.error);
+    }
+  }, [cancelRequest, userRequest]);
 
   const handleAccept = useCallback(
     async (requestId: string) => {
@@ -102,8 +126,8 @@ export const EventDetailsScreen = () => {
   const status = getEventStatus(event);
 
   return (
-    <>
-      <View className="bg-white border-b border-gray-200">
+    <View>
+      <View className="bg-white border-b border-gray-200 pb-3">
         <View className="flex-row justify-between items-start mb-3">
           <Text className="text-2xl font-bold flex-1 text-gray-900">{event.title}</Text>
           <View
@@ -134,7 +158,7 @@ export const EventDetailsScreen = () => {
         </View>
       </View>
 
-      <View className="bg-white p-4 mt-2 border-b border-gray-200">
+      <View className="bg-white py-2 pb-4 mt-2 border-b border-gray-200">
         <View className="space-y-2">
           <View className="flex-row justify-between">
             <Text className="text-sm text-gray-500">Start Time</Text>
@@ -147,7 +171,6 @@ export const EventDetailsScreen = () => {
         </View>
       </View>
 
-      {/* Description */}
       {event.description && (
         <View className="bg-white p-4 mt-2 border-b border-gray-200">
           <Text className="text-sm font-semibold text-gray-700 mb-2">Description</Text>
@@ -168,7 +191,33 @@ export const EventDetailsScreen = () => {
 
       {!isOrganizer && (
         <View className="p-4">
-          {canJoin.canJoin ? (
+          {userRequest ? (
+            userRequest.status === "PENDING" ? (
+              <View>
+                <View className="bg-amber-50 border border-amber-200 p-4 rounded-lg mb-3">
+                  <View className="flex-row items-center justify-center">
+                    <Text className="text-amber-800 text-center font-medium">⏳ Request Pending</Text>
+                  </View>
+                  <Text className="text-amber-600 text-center text-xs mt-1">Waiting for organizer approval</Text>
+                </View>
+                {!hasEventStarted && (
+                  <TouchableOpacity
+                    className="bg-red-500 py-3 rounded-lg items-center active:bg-red-600"
+                    onPress={handleCancelRequest}
+                  >
+                    <Text className="text-white font-semibold text-base">Cancel Request</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            ) : (
+              <View className="bg-green-50 border border-green-200 p-4 rounded-lg">
+                <View className="flex-row items-center justify-center">
+                  <Text className="text-green-800 text-center font-medium">✅ You're Joined!</Text>
+                </View>
+                <Text className="text-green-600 text-center text-xs mt-1">See you at the event</Text>
+              </View>
+            )
+          ) : canJoin.canJoin ? (
             <TouchableOpacity
               className="bg-blue-500 py-4 rounded-lg items-center active:bg-blue-600"
               onPress={handleJoinEvent}
@@ -206,6 +255,11 @@ export const EventDetailsScreen = () => {
                   <Text className="text-white font-semibold">{item.username.charAt(0).toUpperCase()}</Text>
                 </View>
                 <Text className="text-base text-gray-900">{item.username}</Text>
+                {item.id === currentUser?.id && (
+                  <View className="ml-2 bg-blue-100 px-2 py-1 rounded">
+                    <Text className="text-blue-700 text-xs font-semibold">You</Text>
+                  </View>
+                )}
               </View>
             )}
           />
@@ -253,6 +307,6 @@ export const EventDetailsScreen = () => {
           />
         </View>
       )}
-    </>
+    </View>
   );
 };

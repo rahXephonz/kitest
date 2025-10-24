@@ -57,7 +57,6 @@ export const HomeScreen = () => {
           className="bg-white rounded-xl p-4 mb-3 shadow-sm border border-gray-100 active:bg-gray-50"
           onPress={() => router.push(`/event-detail?eventId=${event.id}`)}
         >
-          {/* Header */}
           <View className="flex-row justify-between items-start mb-3">
             <View className="flex-1 mr-3">
               <Text className="text-lg font-bold text-gray-900 mb-1">{event.title}</Text>
@@ -82,7 +81,6 @@ export const HomeScreen = () => {
             </View>
           </View>
 
-          {/* Details */}
           <View className="space-y-2 mb-3">
             <View className="flex-row items-center">
               <Text className="text-sm text-gray-600">📍 {event.location}</Text>
@@ -92,7 +90,6 @@ export const HomeScreen = () => {
             </View>
           </View>
 
-          {/* Footer */}
           <View className="flex-row justify-between items-center pt-3 border-t border-gray-100">
             <View className="flex-row items-center">
               <Text className="text-sm font-semibold text-gray-700">
@@ -177,7 +174,7 @@ export const HomeScreen = () => {
                   </TouchableOpacity>
                 </View>
 
-                <View className="flex-row space-x-2 mb-2">
+                <View className="flex-row gap-2 mb-2">
                   <TouchableOpacity
                     className="flex-1 bg-blue-500 py-3 rounded-lg items-center active:bg-blue-600"
                     onPress={() => router.push("/create-event")}
@@ -213,7 +210,7 @@ export const HomeScreen = () => {
           renderItem={renderEventCard}
           ListEmptyComponent={renderEmptyState}
           contentContainerStyle={{
-            padding: 16,
+            padding: 10,
             paddingBottom: 80,
           }}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#3B82F6" />}

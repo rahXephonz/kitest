@@ -29,13 +29,6 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="settings"
-        options={{
-          tabBarIcon: ({ color }) => <TabBarIcon size={28} name="cog" color={color} />,
-          title: "Settings",
-        }}
-      />
-      <Tabs.Screen
         name="profile"
         options={{
           tabBarIcon: ({ color }) => <TabBarIcon name="user-circle" size={25} color={color} />,

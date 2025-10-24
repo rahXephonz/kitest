@@ -9,10 +9,9 @@ export const LoginScreen = () => {
   const { login, register } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [isRegisterMode, setIsRegisterMode] = useState(false);
 
   const router = useRouter();
-
-  const [isRegisterMode, setIsRegisterMode] = useState(false);
 
   const handleSubmit = () => {
     if (isRegisterMode) {
