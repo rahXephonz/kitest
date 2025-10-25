@@ -3,7 +3,7 @@ import { WrapperStack } from "@/components/wrapper-stack";
 
 export default function Login() {
   return (
-    <WrapperStack>
+    <WrapperStack withBackButton>
       <LoginScreen />
     </WrapperStack>
   );

@@ -34,6 +34,7 @@ export const useAuth = () => {
   const auth = useAtomValue(authAtom);
   const currentUser = useAtomValue(currentUserAtom);
   const register = useSetAtom(registerUserAtom);
+
   const login = useSetAtom(loginUserAtom);
   const logout = useSetAtom(logoutUserAtom);
 

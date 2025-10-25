@@ -96,6 +96,7 @@ export const deleteEventAtom = atom(null, (get, set, eventId: EventId) => {
       updatedRequests.delete(requestId);
     }
   });
+
   set(requestsAtom, updatedRequests);
 });
 

@@ -10,9 +10,10 @@ import { useAuth, useFutureEvents } from "@/hooks/useModule";
 
 export const HomeScreen = () => {
   const { currentUser } = useAuth();
+  const [refreshing, setRefreshing] = useState(false);
+
   const events = useFutureEvents();
   const router = useRouter();
-  const [refreshing, setRefreshing] = useState(false);
   const requests = useAtomValue(requestsAtom);
 
   const onRefresh = useCallback(() => {
@@ -64,16 +65,12 @@ export const HomeScreen = () => {
             </View>
             <View
               className={`px-3 py-1 rounded-full ${
-                status === "Upcoming" ? "bg-blue-100" : status === "In Progress" ? "bg-green-100" : "bg-gray-100"
+                status === "Upcoming" ? "bg-blue-100" : status === "In Progress" ? "bg-green-100" : "bg-green-500"
               }`}
             >
               <Text
                 className={`text-xs font-semibold ${
-                  status === "Upcoming"
-                    ? "text-blue-700"
-                    : status === "In Progress"
-                      ? "text-green-700"
-                      : "text-gray-700"
+                  status === "Upcoming" ? "text-blue-700" : status === "In Progress" ? "text-green-700" : "text-white"
                 }`}
               >
                 {status}
@@ -208,12 +205,13 @@ export const HomeScreen = () => {
           data={events}
           keyExtractor={item => item.id}
           renderItem={renderEventCard}
+          onEndReached={info => console.log(info)}
           ListEmptyComponent={renderEmptyState}
           contentContainerStyle={{
             padding: 10,
             paddingBottom: 80,
           }}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#3B82F6" />}
+          refreshControl={<RefreshControl refreshing={refreshing} size={1} onRefresh={onRefresh} tintColor="black" />}
           showsVerticalScrollIndicator={false}
         />
       </View>

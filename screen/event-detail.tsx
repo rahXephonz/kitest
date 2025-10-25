@@ -108,7 +108,7 @@ export const EventDetailsScreen = () => {
     });
   }, []);
 
-  const getEventStatus = useCallback((event: any): string => {
+  const getEventStatus = useCallback((event: SportingEvent): string => {
     const now = Date.now();
     if (event.startTime > now) return "Upcoming";
     if (event.endTime > now) return "In Progress";
@@ -132,12 +132,12 @@ export const EventDetailsScreen = () => {
           <Text className="text-2xl font-bold flex-1 text-gray-900">{event.title}</Text>
           <View
             className={`px-3 py-1 rounded-full ${
-              status === "Upcoming" ? "bg-blue-100" : status === "In Progress" ? "bg-green-100" : "bg-gray-100"
+              status === "Upcoming" ? "bg-blue-100" : status === "In Progress" ? "bg-green-100" : "bg-green-500"
             }`}
           >
             <Text
               className={`text-xs font-semibold ${
-                status === "Upcoming" ? "text-blue-700" : status === "In Progress" ? "text-green-700" : "text-gray-700"
+                status === "Upcoming" ? "text-blue-700" : status === "In Progress" ? "text-green-700" : "text-white"
               }`}
             >
               {status}

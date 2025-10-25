@@ -2,6 +2,12 @@ type UserId = string;
 type EventId = string;
 type RequestId = string;
 
+enum EventStatus {
+  UPCOMING = "Upcoming",
+  INPROGRESS = "In Progress",
+  COMPLETED = "Completed",
+}
+
 enum RequestStatus {
   PENDING = "PENDING",
   ACCEPTED = "ACCEPTED",
